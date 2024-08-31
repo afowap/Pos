@@ -9,10 +9,15 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
+      - name: Set up Node.js 20  # Explicitly setting up Node.js 20
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          persist-credentials: false  # Avoids the extraheader warning
+          persist-credentials: false  # Helps avoid the git config warning
           clean: true  # Ensures a clean git state
 
       # Used to cache dependencies with a timeout
