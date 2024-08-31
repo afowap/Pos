@@ -9,7 +9,11 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-      - uses: actions/checkout@v3  # Updated to the latest version
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false  # Avoids the extraheader warning
+          clean: true  # Ensures a clean git state
 
       # Used to cache dependencies with a timeout
       - name: Get Date
@@ -19,12 +23,13 @@ jobs:
         shell: bash
 
       - name: Cache Buildozer global directory
-        uses: actions/cache@v3  # Updated to the latest version
+        uses: actions/cache@v3
         with:
           path: .buildozer_global
-          key: buildozer-global-${{ hashFiles('buildozer.spec') }} # Replace with your path
+          key: buildozer-global-${{ hashFiles('buildozer.spec') }}  # Replace with your path
 
-      - uses: actions/cache@v3  # Updated to the latest version
+      - name: Cache Buildozer directory
+        uses: actions/cache@v3
         with:
           path: .buildozer
           key: ${{ runner.os }}-${{ env.date }}-${{ hashFiles('buildozer.spec') }}
@@ -37,7 +42,7 @@ jobs:
           buildozer_version: stable
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3  # Updated to the latest version
+        uses: actions/upload-artifact@v3
         with:
           name: package
           path: ${{ steps.buildozer.outputs.filename }}
