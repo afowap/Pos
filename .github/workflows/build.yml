@@ -10,12 +10,12 @@ jobs:
 
     steps:
       - name: Set up Node.js 20  # Explicitly setting up Node.js 20
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
 
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           persist-credentials: false  # Helps avoid the git config warning
           clean: true  # Ensures a clean git state
