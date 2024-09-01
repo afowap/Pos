@@ -1,53 +1,20 @@
-name: CI
-
 on:
   push:
     branches: [ main ]
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
-
+    runs-on: ubuntu-latest
     steps:
-      - name: Set up Node.js 20  # Explicitly setting up Node.js 20
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v2
+      - name: Build APK
+        uses: digreatbrian/buildozer-action@v1
         with:
-          node-version: '20'
-
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false  # Helps avoid the git config warning
-          clean: true  # Ensures a clean git state
-
-      # Used to cache dependencies with a timeout
-      - name: Get Date
-        id: get-date
-        run: |
-          echo "date=$(date -u '+%Y%m%d')" >> $GITHUB_ENV  # Updated to use environment files
-        shell: bash
-
-      - name: Cache Buildozer global directory
-        uses: actions/cache@v4
-        with:
-          path: .buildozer_global
-          key: buildozer-global-${{ hashFiles('buildozer.spec') }}  # Replace with your path
-
-      - name: Cache Buildozer directory
-        uses: actions/cache@v4
-        with:
-          path: .buildozer
-          key: ${{ runner.os }}-${{ env.date }}-${{ hashFiles('buildozer.spec') }}
-
-      - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
-        with:
-          command: buildozer android debug
-          buildozer_version: stable
+          buildozer-cmd: buildozer -v android debug
+          work-dir: . # directory where your main.py file rests
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: package
-          path: ${{ steps.buildozer.outputs.filename }}
+          path: ./bin/*.apk
